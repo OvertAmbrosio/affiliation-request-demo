@@ -1,0 +1,19 @@
+export const USER_SUPERVISOR_UUID = 'uuid-supervisor-002';
+export const USER_SYSTEM_UUID = 'uuid-system-003';
+export const USER_ADMIN_UUID = 'usr-adm-a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d';
+
+// Product IDs
+export const CULQI_ONLINE_PRODUCT_ID = 1;
+export const CULQI_FULL_PRODUCT_ID = 2;
+export const CULQI_LINK_PRODUCT_ID = 3;
+
+// Observation Codes
+export const OBSERVATION_CODES = Object.freeze({
+  PLAFT_RISK: 'PLAFT_RISK',
+  BLACKLIST_MATCH: 'BLACKLIST_MATCH',
+  WEB_NO_ECOMMERCE: 'WEB_NO_ECOMMERCE',
+  WEB_INCOMPLETE: 'WEB_INCOMPLETE',
+  RUC_INVALID: 'RUC_INVALID',
+  CREDIT_HISTORY_NEGATIVE: 'CREDIT_HISTORY_NEGATIVE',
+  BANK_ACCOUNT_INVALID: 'BANK_ACCOUNT_INVALID',
+});
