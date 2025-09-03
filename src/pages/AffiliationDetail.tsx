@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { toast } from 'sonner';
 
 import { Badge } from '../components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -8,21 +7,18 @@ import { ValidationHistoryDialog } from '../components/ValidationHistoryDialog';
 import { ValidationsTable } from '../components/ValidationsTable';
 import { useDbContext } from '../context/DbContext';
 import type { AffiliationDetail as AffiliationDetailType } from '../interfaces/models';
-import type { ValidationHistoryView } from '../interfaces/views';
 import { getAffiliationDetailById } from '../services/affiliation/get-affiliation-detail';
-import { getValidationHistory } from '../services/validation/get-validation-history';
 import { getStatusVariant, getStatusIcon } from '../utils/statusUtils';
 import type { AllStatuses } from '../interfaces/enums.type';
+import { Button } from '../components/ui/button';
+import { HistoryIcon } from 'lucide-react';
 
 const AffiliationDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { db } = useDbContext();
   const [affiliation, setAffiliation] = useState<AffiliationDetailType | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isHistoryModalOpen, setHistoryModalOpen] = useState(false);
-  const [selectedValidationResultId, setSelectedValidationResultId] = useState<number | null>(null);
-  const [history, setHistory] = useState<ValidationHistoryView[]>([]);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [selectedValidationResultId, __setSelectedValidationResultId] = useState<number | null>(null);
 
   useEffect(() => {
     if (db && id) {
@@ -37,28 +33,6 @@ const AffiliationDetail = () => {
       }
     }
   }, [db, id]);
-
-  const handleViewHistory = async (validationResultId: number) => {
-    if (!db) return;
-    setSelectedValidationResultId(validationResultId);
-    setHistoryModalOpen(true);
-    setIsLoadingHistory(true);
-    try {
-      const historyData = getValidationHistory(db, validationResultId);
-      setHistory(historyData);
-    } catch (error) {
-      toast.error('Error al cargar el historial de validación.');
-      console.error(error);
-    } finally {
-      setIsLoadingHistory(false);
-    }
-  };
-
-  const handleCloseHistoryModal = () => {
-    setHistoryModalOpen(false);
-    setSelectedValidationResultId(null);
-    setHistory([]);
-  };
 
   if (loading) {
     return <p>Cargando detalles de la afiliación...</p>;
@@ -102,15 +76,16 @@ const AffiliationDetail = () => {
         </CardContent>
       </Card>
 
-      <ValidationsTable validations={affiliation.validations} onViewHistory={handleViewHistory} />
+      <ValidationsTable validations={affiliation.validations} />
 
       {selectedValidationResultId !== null && (
         <ValidationHistoryDialog
-          isOpen={isHistoryModalOpen}
-          onClose={handleCloseHistoryModal}
-          history={history}
-          isLoading={isLoadingHistory}
-          validationCode={affiliation?.validations.find(v => v.id === selectedValidationResultId)?.code || ''}
+          validationResultId={selectedValidationResultId}
+          trigger={
+            <Button variant="ghost" size="icon">
+              <HistoryIcon className="h-4 w-4" />
+            </Button>
+          }
         />
       )}
     </div>
